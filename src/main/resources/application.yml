@@ -1,0 +1,3 @@
+app:
+  listener:
+    enabled: true
