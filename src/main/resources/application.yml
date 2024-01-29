@@ -1,3 +1,4 @@
 app:
   listener:
     enabled: true
+  init-students: true

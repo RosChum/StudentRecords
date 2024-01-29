@@ -21,20 +21,28 @@ public class ConsoleService {
     private final StudentMapper studentMapper;
     private final ApplicationEventPublisher publisher;
 
-//add --f Andry --l Bobrov --a 29
 
-
+    //add --f Andry --l Bobrov --a 29
     @ShellMethod(key = "add")
     public void addStudent(@ShellOption(value = "f") String firstName, @ShellOption(value = "l") String lastName, @ShellOption(value = "a") int age) {
-        publisher.publishEvent(new EventHandler(this, new Event("Добавлен новый студент"
-                , studentStorage.add(studentMapper.convertToEntity(firstName, lastName, age)))));
-
+        if (studentStorage.add(studentMapper.convertToEntity(firstName, lastName, age))) {
+            publisher.publishEvent(new EventHandler(this, new Event("Добавлен новый студент"
+                    , "Имя: " + firstName + " Фамилия: " + lastName + " Возраст: " + age)));
+        } else {
+            publisher.publishEvent(new EventHandler(this, new Event("Студент с таким ФИО и датой рождения уже имеется"
+                    , "")));
+        }
     }
 
     @ShellMethod(key = "del")
     public void deleteStudent(@ShellOption(value = "u") String uuid) {
-        studentStorage.delete(UUID.fromString(uuid));
-
+        if (studentStorage.delete(UUID.fromString(uuid))) {
+            publisher.publishEvent(new EventHandler(this, new Event("Студент c Id " + uuid + " удален"
+                    , "")));
+        } else {
+            publisher.publishEvent(new EventHandler(this, new Event("Студент c Id " + uuid + " не найден"
+                    , "")));
+        }
     }
 
     @ShellMethod(key = "get")
